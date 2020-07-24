@@ -1,14 +1,19 @@
 # -*- coding: utf-8 -*-
 
+# import sys,os
+# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # __file__获取执行文件相对路径，整行为取上一级的上一级目录
+# sys.path.append(BASE_DIR)
+
 import time
 
-from pymongo import MongoClient
 from selenium import webdriver
 from selenium.webdriver import ActionChains
 
 from config import chrome_driver_path, sogou_wechat_url
 
-import MongoDb
+from mongoDB import MongoDb
+
+
 
 def get_current_time(format_str: str = '%Y-%m-%d %H:%M:%S'):
     """
@@ -41,6 +46,7 @@ class SogouLogin:
 
         self.search()
         self.swz_btn()
+        self.get_search_news_list()
 
         # self.quit_chrome_driver()
 
@@ -139,6 +145,10 @@ class SogouLogin:
         """
         搜索列表结果提取
         """
+        news_box = self.dr.find_element_by_xpath('//div[@class="news-box"]')
+        news_list = news_box.find_element_by_xpath('//ul[@class="news-list"]')
+        lis = news_list.find_elements_by_xpath('li')
+        print("条数%s"%len(lis))
 
 
 if __name__ == '__main__':
