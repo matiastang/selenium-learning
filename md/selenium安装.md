@@ -68,9 +68,16 @@ mv: rename /Users/yunxi/Downloads/chromedriver to /usr/bin/chromedriver: Operati
 ```
 原因是因为系统有一个 `System Integrity Protection (SIP)` 系统完整性保护，如果此功能不关闭，是无法移动到 `/usr/bin` 目录下的。
 
+检查当前SIP的开启状况，输入如下命令：
+```
+csrutil status
+```
+返回命令为：System Integrity Protection status: enabled.，则SIP为开启状态
+返回命令为：System Integrity Protection status: disabled.，则SIP为关闭状态
+
 解决办法是：
 
-1. 电脑关机，然后在开机时按住 command + R 键，直到出现苹果 logo 和进度条时松开，进入OS X恢复模式。
+1. 电脑关机，然后在开机时按住 `command + R` 键，直到出现苹果 `logo` 和进度条时松开，进入OS X恢复模式。
 2. 进入恢复模式后打开【实用工具】——【终端】
 3. 在终端输入命令`csrutil disable`，然后关闭终端。（如果要重新开启，同样的方法输入`csrutil enable`）
 4. 重启电脑即可。
