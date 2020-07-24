@@ -24,7 +24,7 @@ Requirement already satisfied: urllib3 in /usr/local/lib/python3.7/site-packages
 
 1. 查看`chrome`的版本：
 
-`chrome`打开时点击左上角`Chrome`,再点击`关于 Chrome`,即可查看到版本`版本 83.0.4103.116（正式版本） （64 位）`。
+`chrome`打开时点击左上角`Chrome`,再点击`关于 Chrome`,即可查看到版本`版本 84.0.4147.89（正式版本） （64 位）`。
 
 2. 下载
 
@@ -36,6 +36,16 @@ Requirement already satisfied: urllib3 in /usr/local/lib/python3.7/site-packages
 sudo mv ~/Downloads/chromedriver /usr/bin
 ```
 
+将`SIP`打开后还是无法执行上述命令
+于是将`chromedriver`移至`/usr/local/bin`目录下
+```
+chromedriver
+Starting ChromeDriver 84.0.4147.30 (48b3e868b4cc0aa7e8149519690b6f6949e110a8-refs/branch-heads/4147@{#310}) on port 9515
+Only local connections are allowed.
+Please see https://chromedriver.chromium.org/security-considerations for suggestions on keeping ChromeDriver safe.
+ChromeDriver was started successfully.
+```
+
 3. 验证
 
 终端输入：
@@ -44,16 +54,13 @@ chromedriver
 ```
 测试调用`chrome`：
 ```
-ipython
-Python 3.7.0 (default, Aug 22 2018, 15:22:33)
-Type 'copyright', 'credits' or 'license' for more information
-IPython 6.5.0 -- An enhanced Interactive Python. Type '?' for help.
-
-In [1]: from selenium import webdriver
-
-In [2]: browser = webdriver.Chrome()
-
-In [3]:
+python3
+Python 3.7.2 (default, Feb 12 2019, 08:15:36)
+[Clang 10.0.0 (clang-1000.11.45.5)] on darwin
+Type "help", "copyright", "credits" or "license" for more information.
+>>> from selenium import webdriver
+>>> browser = webdriver.Chrome()
+>>>
 ```
 如果能调用chrome浏览器，即表示安装成功
 
