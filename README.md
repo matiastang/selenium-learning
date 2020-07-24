@@ -1,2 +1,3 @@
 # selenium-learning
-selenium web自动化测试
+
+[selenium 中文网](http://www.selenium.org.cn/)
