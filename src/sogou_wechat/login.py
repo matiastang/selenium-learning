@@ -135,6 +135,12 @@ class SogouLogin:
         btn_sgzh = self.dr.find_element_by_class_name('swz2')
         ActionChains(self.dr).move_to_element(btn_sgzh).click(btn_sgzh).perform()
 
+    def get_search_news_list(self):
+        """
+        搜索列表结果提取
+        """
+
+
 if __name__ == '__main__':
     sogou_login = SogouLogin()
 
