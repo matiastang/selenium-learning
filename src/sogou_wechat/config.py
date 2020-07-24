@@ -7,4 +7,5 @@ MONGO_CONFIG = {
     # 'pwd': '123456'
 }
 
-chrome_driver_path = "/usr/local/bin/chromedriver"
+chrome_driver_path = '/usr/local/bin/chromedriver'
+sogou_wechat_url = 'https://weixin.sogou.com'

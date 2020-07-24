@@ -6,8 +6,9 @@ from pymongo import MongoClient
 from selenium import webdriver
 from selenium.webdriver import ActionChains
 
-from config import MONGO_CONFIG, chrome_driver_path
+from config import chrome_driver_path, sogou_wechat_url
 
+import MongoDb
 
 def get_current_time(format_str: str = '%Y-%m-%d %H:%M:%S'):
     """
@@ -17,71 +18,10 @@ def get_current_time(format_str: str = '%Y-%m-%d %H:%M:%S'):
     """
     return time.strftime(format_str, time.localtime())
 
-
-class Db:
-    def __init__(self):
-        """初始化
-        初始化 mongo db
-        """
-        mongo_uri = 'mongodb://%s:%s@%s:%s' % (
-            MONGO_CONFIG['user'],
-            MONGO_CONFIG['pwd'],
-            MONGO_CONFIG['host'],
-            MONGO_CONFIG['port'])
-        self.mongo = MongoClient(mongo_uri)
-        self.result_db = self.mongo['crawlab_result']
-        self.task_db = self.mongo['crawlab']
-
-    def update_sogou_login_cookie(self, username, cookie):
-        """
-        更新搜狗微信登录 cookie 信息
-        :param username:
-        :param cookie:
-        :return:
-        """
-        col = self.result_db['sogou_login_cookies']
-        ctime = get_current_time()
-        find_obj = {
-            'nickname': username,
-            'is_valid': 1,
-        }
-
-        login_item = col.find_one(find_obj)
-
-        print(login_item)
-
-        # 插入新数据
-        if not login_item:
-            cookie = 'DESC=0; %s' % cookie
-            col.insert_one({
-                'cookie': cookie,
-                'nickname': username,
-                'device': '0',
-                'state': 'normal',
-                'c_time': ctime,
-                'm_time': ctime,
-                'is_valid': 1,
-                'failures': 0,
-            })
-            return
-
-        # 更新原有数据
-        cookie = 'DESC=%s; %s' % (login_item['device'], cookie)
-        col.update_one(find_obj, {
-            '$set': {
-                'state': 'normal',
-                'cookie': cookie,
-                'c_time': ctime,
-                'm_time': ctime,
-                'failures': 0,
-            }
-        })
-
-
 class SogouLogin:
 
     def __init__(self):
-        # self.db = Db()
+        # self.db = MongoDb()
         self.dr = None
 
     def do_login(self):
@@ -99,7 +39,10 @@ class SogouLogin:
 
         # self.db.update_sogou_login_cookie(username, req_cookie)
 
-        self.quit_chrome_driver()
+        self.search()
+        self.swz_btn()
+
+        # self.quit_chrome_driver()
 
     def init_chrome_driver(self):
         """
@@ -107,7 +50,7 @@ class SogouLogin:
         """
         self.dr = webdriver.Chrome(executable_path=chrome_driver_path)
         self.dr.implicitly_wait(10)
-        self.dr.get('https://weixin.sogou.com')
+        self.dr.get(sogou_wechat_url)
 
     def quit_chrome_driver(self):
         """
@@ -171,12 +114,32 @@ class SogouLogin:
 
         return req_cookie
 
+    def search(self, keyword='高考'):
+        """
+        搜索内容
+        """
+        inputElement = self.dr.find_element_by_xpath('//input[@id="query"]')
+        inputElement.send_keys(keyword)
+
+    def swz_btn(self):
+        """
+        搜文章
+        """
+        btn_swz = self.dr.find_element_by_class_name('swz')
+        ActionChains(self.dr).move_to_element(btn_swz).click(btn_swz).perform()
+
+    def sgzh_btn(self):
+        """
+        搜公众号
+        """
+        btn_sgzh = self.dr.find_element_by_class_name('swz2')
+        ActionChains(self.dr).move_to_element(btn_sgzh).click(btn_sgzh).perform()
 
 if __name__ == '__main__':
     sogou_login = SogouLogin()
 
-    while True:
-        try:
-            sogou_login.do_login()
-        except Exception as e:
-            print(repr(e))
+    # while True:
+    try:
+        sogou_login.do_login()
+    except Exception as e:
+        print(repr(e))
