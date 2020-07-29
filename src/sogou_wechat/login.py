@@ -13,21 +13,14 @@ from config import chrome_driver_path, sogou_wechat_url
 
 from mongoDB import MongoDb
 
-
-
-def get_current_time(format_str: str = '%Y-%m-%d %H:%M:%S'):
-    """
-    获取当前时间，默认为 2020-01-01 00:00:00 格式
-    :param format_str: 格式
-    :return:
-    """
-    return time.strftime(format_str, time.localtime())
-
 class SogouLogin:
 
     def __init__(self):
-        # self.db = MongoDb()
+        self.db = MongoDb()
         self.dr = None
+        self.search_result = []
+        self.search_keyword = '高考'
+        self.search_page_number = 3
 
     def do_login(self):
         """
@@ -35,20 +28,21 @@ class SogouLogin:
         """
         self.init_chrome_driver()
 
-        self.reset_window_size()
-        self.click_login_btn()
-        self.wait_login_done()
+        # self.reset_window_size()
+        # self.click_login_btn()
+        # self.wait_login_done()
 
-        req_cookie = self.get_cookies()
-        username = self.get_username()
+        # req_cookie = self.get_cookies()
+        # username = self.get_username()
 
         # self.db.update_sogou_login_cookie(username, req_cookie)
 
-        self.search()
+        self.search(self.search_keyword)
         self.swz_btn()
+        time.sleep(2)
         self.get_search_news_list()
 
-        # self.quit_chrome_driver()
+        self.quit_chrome_driver()
 
     def init_chrome_driver(self):
         """
@@ -141,15 +135,58 @@ class SogouLogin:
         btn_sgzh = self.dr.find_element_by_class_name('swz2')
         ActionChains(self.dr).move_to_element(btn_sgzh).click(btn_sgzh).perform()
 
+    def next_page(self):
+
+        search_page_number
+
     def get_search_news_list(self):
         """
         搜索列表结果提取
         """
         news_box = self.dr.find_element_by_xpath('//div[@class="news-box"]')
-        news_list = news_box.find_element_by_xpath('//ul[@class="news-list"]')
+        news_list = news_box.find_element_by_xpath('.//ul[@class="news-list"]')
         lis = news_list.find_elements_by_xpath('li')
-        print("条数%s"%len(lis))
+        for i, news_item in enumerate(lis):
+            result_item = self.get_list_item(news_item)
+            print(result_item)
+            self.db.insert_sogou_search_result(result_item)
 
+    def get_list_item(self, news):
+        """
+        获取搜索结果列表
+        """
+        item_id = news.get_attribute('d')
+
+        txt_box_element = news.find_element_by_xpath('.//div[@class="txt-box"]')
+ 
+        title_element = txt_box_element.find_element_by_xpath('.//h3/a')
+        article_title = title_element.get_attribute('text')
+        article_url = title_element.get_attribute('href')
+
+        txt_info = txt_box_element.find_element_by_xpath('.//p[@class="txt-info"]').text
+
+        article_account_element = txt_box_element.find_element_by_xpath('.//div[@class="s-p"]/a')
+        article_account_name = article_account_element.get_attribute('text')
+        article_account_url = article_account_element.get_attribute('href')
+
+        post_time_element = txt_box_element.find_element_by_xpath('.//div[@class="s-p"]')
+        post_time_stamp = post_time_element.get_attribute('t')
+        post_time = post_time_element.find_element_by_xpath('.//span').text
+
+        item_dic = {
+            "id": item_id,
+            "keyword": self.search_keyword,
+            "article_title": article_title,
+            "article_url": article_url,
+            "txt_info": txt_info,
+            "article_account": {
+                "name": article_account_name,
+                "url": article_account_url
+            },
+            "post_time_stamp": post_time_stamp,
+            "post_time": post_time
+        }
+        return item_dic
 
 if __name__ == '__main__':
     sogou_login = SogouLogin()

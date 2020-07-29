@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
 MONGO_CONFIG = {
-    # 'host': '192.168.0.144',
-    # 'port': 27017,
-    # 'user': 'root',
-    # 'pwd': '123456'
+    'host': '47.93.9.48',
+    'port': 27017,
+    'user': 'root',
+    'pwd': 'Yunxi20191231'
 }
 
 chrome_driver_path = '/usr/local/bin/chromedriver'
