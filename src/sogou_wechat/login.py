@@ -20,7 +20,8 @@ class SogouLogin:
         self.dr = None
         self.search_result = []
         self.search_keyword = '高考'
-        self.search_page_number = 3
+        self.search_page_max_number = 3
+        self.search_now_page_number = 0
 
     def do_login(self):
         """
@@ -39,7 +40,7 @@ class SogouLogin:
 
         self.search(self.search_keyword)
         self.swz_btn()
-        time.sleep(2)
+        time.sleep(1)
         self.get_search_news_list()
 
         self.quit_chrome_driver()
@@ -137,7 +138,13 @@ class SogouLogin:
 
     def next_page(self):
 
-        search_page_number
+        next_element = self.dr.find_element_by_link_text('下一页')
+        if not next_element:
+            print('没有下一页数据')
+            return
+        ActionChains(self.dr).move_to_element(next_element).click(next_element).perform()
+        time.sleep(1)
+        self.get_search_news_list()
 
     def get_search_news_list(self):
         """
@@ -148,8 +155,10 @@ class SogouLogin:
         lis = news_list.find_elements_by_xpath('li')
         for i, news_item in enumerate(lis):
             result_item = self.get_list_item(news_item)
-            print(result_item)
             self.db.insert_sogou_search_result(result_item)
+        self.search_now_page_number += 1
+        if self.search_now_page_number < self.search_page_max_number:
+            self.next_page()
 
     def get_list_item(self, news):
         """
