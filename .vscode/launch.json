@@ -5,6 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "微博获取登录cookies",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/weibo/login.py",
+            "console": "integratedTerminal"
+        },
+        {
             "name": "搜狗微信",
             "type": "python",
             "request": "launch",
