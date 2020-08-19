@@ -27,7 +27,7 @@ class MongoDb:
             MONGO_CONFIG['port'])
         self.mongo = MongoClient(mongo_uri)
         self.sogou_db = self.mongo['crawlab_spider_conf']
-        self.sogou_search_col = self.sogou_db['sina_weibo_account']
+        self.sogou_search_col = self.sogou_db['sina_weibo_web_cookies']
 
     def update_weibo_login_cookie(self, nick_name, cookie):
         """
@@ -53,9 +53,6 @@ class MongoDb:
                 'password': '',
                 'nickname': nick_name,
                 'cookie': cookie,
-                'status': 0,
-                'login_success': 1,
-                'login_fail': 0,
                 'ctime': ctime,
                 'mtime': ctime,
                 'is_enable': 1
@@ -68,7 +65,6 @@ class MongoDb:
             '$set': {
                 'nickname': nick_name,
                 'cookie': cookie,
-                'state': 0,
                 'ctime': ctime,
                 'mtime': ctime,
                 'is_enable': 1,
