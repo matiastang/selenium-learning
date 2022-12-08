@@ -11,7 +11,7 @@ Automat==0.7.0
 beautifulsoup4==4.8.0
 blinker==1.4
 Brotli==1.0.7
-certifi==2019.11.28
+certifi==2022.12.7
 cffi==1.12.3
 chardet==3.0.4
 cigam==0.0.3
